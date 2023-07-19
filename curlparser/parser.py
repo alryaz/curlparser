@@ -57,7 +57,10 @@ def parse(curl_command: str) -> ParsedCommand:
     curl_command = curl_command.replace("\\\n", " ")
 
     tokens = shlex.split(curl_command)
-    parsed_args = parser.parse_args(tokens)
+    try:
+        parsed_args, unknown_args = parser.parse_known_args(tokens)
+    except AttributeError:
+        parsed_args, unknown_args = parser.parse_args(tokens), []
 
     if parsed_args.command != "curl":
         raise ValueError("Not a valid cURL command")
